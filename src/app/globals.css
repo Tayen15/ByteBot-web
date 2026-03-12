@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@theme {
+  --color-dark-primary: #1a1d23;
+  --color-dark-secondary: #23272f;
+  --color-dark-card: #2b2f38;
+  --color-dark-hover: #32363f;
+  --color-discord: #5865F2;
+  --color-discord-hover: #4752c4;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #b9bbbe;
+  --color-border-dark: #3a3f4b;
+
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+@layer base {
+  body {
+    background-color: var(--color-dark-primary);
+    color: var(--color-text-primary);
+  }
+}
