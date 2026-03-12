@@ -120,7 +120,7 @@ export default function OwnerLogsPage() {
                     <span className="text-xs font-bold font-mono tracking-wider text-text-secondary uppercase">Live</span>
                 </div>
             </div>
-            <div className="p-6 font-mono text-sm bg-dark-primary flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-1 min-h-[300px]">
+            <div className="p-6 font-mono text-sm bg-dark-primary flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-1 min-h-75">
                 {liveLogs.length === 0 ? (
                   <div className="text-text-secondary opacity-75 italic mb-4">No recent live logs captured yet. Generating logs...</div>
                 ) : (

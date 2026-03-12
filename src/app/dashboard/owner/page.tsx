@@ -33,13 +33,32 @@ export default function OwnerDashboardPage() {
   const [allGuilds, setAllGuilds] = useState<Guild[]>([]);
   const [lofiSessions, setLofiSessions] = useState<LofiSession[]>([]);
 
-  const fetchData = () => {
-    Promise.all([
-      fetch('/api/bot/owner/stats').then(r => r.json()),
-      fetch('/api/bot/owner/servers').then(r => r.json()),
-      fetch('/api/bot/owner/lofi').then(r => r.json()),
-    ]).then(([statsData, serversData, lofiData]) => {
-      if (statsData.live) {
+  const fetchData = async () => {
+    try {
+      // 1. Check health first
+      const healthRes = await fetch('/api/bot/health');
+      if (!healthRes.ok) throw new Error('Bot offline');
+      const healthData = await healthRes.json();
+      
+      if (healthData.status !== 'online') {
+         setBotStats(prev => ({ ...prev, status: 'OFFLINE' }));
+         return;
+      }
+
+      // 2. Fetch Owner Stats if Online
+      const [statsRes, serversRes, lofiRes] = await Promise.all([
+        fetch('/api/bot/owner/stats'),
+        fetch('/api/bot/owner/servers'),
+        fetch('/api/bot/owner/lofi')
+      ]);
+
+      const [statsData, serversData, lofiData] = await Promise.all([
+        statsRes.json().catch(() => ({})),
+        serversRes.json().catch(() => ({})),
+        lofiRes.json().catch(() => ({}))
+      ]);
+
+      if (statsData?.live) {
         setBotStats({
           status: 'ONLINE',
           uptime: formatUptime(statsData.live.uptime),
@@ -49,10 +68,14 @@ export default function OwnerDashboardPage() {
           ping: statsData.live.ping ?? 0,
         });
       }
-      if (serversData.servers) setAllGuilds(serversData.servers);
-      if (lofiData && lofiData.sessions) setLofiSessions(lofiData.sessions);
-      if (lofiData.sessions) setLofiSessions(lofiData.sessions);
-    }).catch(console.error);
+      
+      if (serversData?.servers) setAllGuilds(serversData.servers);
+      if (lofiData?.sessions) setLofiSessions(lofiData.sessions);
+
+    } catch (error) {
+      console.error('Failed to fetch dashboard data:', error);
+      setBotStats(prev => ({ ...prev, status: 'OFFLINE' }));
+    }
   };
 
   useEffect(() => {
