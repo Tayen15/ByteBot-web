@@ -84,14 +84,14 @@ export default function OwnerServerDetailPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-4 border-b border-border-dark gap-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/dashboard/owner/servers" className="text-text-secondary hover:text-discord transition-colors p-2 hover:bg-dark-secondary rounded-lg">
+                    <Link href="/dashboard/owner" className="text-text-secondary hover:text-discord transition-colors p-2 hover:bg-dark-secondary rounded-lg">
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                         </svg>
                     </Link>
                     <h1 className="text-3xl font-bold text-white">Server Details</h1>
                 </div>
-                <Link href="/dashboard/owner/servers" className="bg-dark-secondary hover:bg-dark-card border border-border-dark text-white px-4 py-2 rounded-lg transition-colors font-medium shadow-sm flex items-center justify-center gap-2">
+                <Link href="/dashboard/owner" className="bg-dark-secondary hover:bg-dark-card border border-border-dark text-white px-4 py-2 rounded-lg transition-colors font-medium shadow-sm flex items-center justify-center gap-2">
                     <svg className="w-5 h-5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
