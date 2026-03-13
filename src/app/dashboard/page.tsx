@@ -21,20 +21,15 @@ export default async function DashboardIndexPage() {
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-7xl flex-1">
-        {/* Header */}
-        <div className="mb-8">
-            <h1 className="text-4xl font-bold mb-2 text-white">Dashboard</h1>
-            <p className="text-text-secondary">Pilih server untuk mengatur konfigurasi ByteBot</p>
-        </div>
 
         {/* Guilds Grid */}
         <div className="mb-6">
-            <h2 className="text-2xl font-bold mb-3 text-white flex items-center gap-2">
-               <svg className="w-6 h-6 text-discord" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <h1 className="text-2xl font-bold mb-3 text-white flex items-center gap-2">
+               <svg className="w-10 h-10 text-discord" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                </svg>
                Your Servers
-            </h2>
+            </h1>
             <p className="text-text-secondary mb-6">Klik server untuk mengatur konfigurasi</p>
         </div>
 

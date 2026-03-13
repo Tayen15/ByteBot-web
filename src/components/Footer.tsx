@@ -33,10 +33,17 @@ export default function Footer() {
           </a>
           <span className="text-border-dark hidden sm:inline">|</span>
           <Link
+            href="/tos"
+            className="text-text-secondary hover:text-white text-sm transition-colors duration-200"
+          >
+            Terms of Service
+          </Link>
+          <span className="text-border-dark hidden sm:inline">|</span>
+          <Link
             href="/privacy"
             className="text-text-secondary hover:text-white text-sm transition-colors duration-200"
           >
-            ToS & Privacy
+            Privacy Policy
           </Link>
         </div>
 
