@@ -17,10 +17,12 @@ export default function WelcomeMessagesPage({ params }: { params: Promise<{ id: 
   const [selectedChannel, setSelectedChannel] = useState('');
   
   const [messageText, setMessageText] = useState('Welcome {{mention}} to {{server}}!');
+  const [memberCountText, setMemberCountText] = useState('You are the [membercount.ordinal] member!');
   const [embedTitle, setEmbedTitle] = useState('Welcome!');
   const [embedDesc, setEmbedDesc] = useState('Glad to have you here, {{mention}}!');
   
   const [showPlaceholders, setShowPlaceholders] = useState(false);
+  const [showSubTextPlaceholders, setShowSubTextPlaceholders] = useState(false);
   const [showImageGallery, setShowImageGallery] = useState(false);
   const [channels, setChannels] = useState<{ id: string; name: string }[]>([]);
 
@@ -37,6 +39,7 @@ export default function WelcomeMessagesPage({ params }: { params: Promise<{ id: 
         setMessageText(w.message ?? 'Welcome {{mention}} to {{server}}!');
         setEmbedTitle(w.embedTitle ?? 'Welcome!');
         setEmbedDesc(w.embedDescription ?? 'Glad to have you here, {{mention}}!');
+        setMemberCountText(w.memberCountText !== null && w.memberCountText !== undefined ? w.memberCountText : 'You are the [membercount.ordinal] member!');
       }
       if (chData.success) setChannels(chData.channels ?? []);
     }).catch(console.error).finally(() => setLoading(false));
@@ -63,6 +66,7 @@ export default function WelcomeMessagesPage({ params }: { params: Promise<{ id: 
           message: messageText,
           embedTitle,
           embedDescription: embedDesc,
+          memberCountText,
         }),
       });
       const data = await res.json();
@@ -316,13 +320,50 @@ export default function WelcomeMessagesPage({ params }: { params: Promise<{ id: 
                     </div>
 
                     <div>
-                       <label className="block text-sm font-medium mb-2">Custom Sub-text Message</label>
+                       <div className="flex justify-between relative">
+                          <label className="block text-sm font-medium mb-2">Custom Sub-text Message</label>
+                          <button 
+                            type="button" 
+                            className="text-discord hover:text-discord-hover transition-colors"
+                            onClick={() => setShowSubTextPlaceholders(!showSubTextPlaceholders)}
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </button>
+
+                          {/* Placeholder dropdown */}
+                          {showSubTextPlaceholders && (
+                             <div className="absolute right-0 top-8 mt-2 w-72 bg-dark-card border border-border-dark rounded-xl shadow-xl z-50 p-4 max-h-80 overflow-y-auto custom-scrollbar">
+                                <h3 className="font-semibold text-sm mb-3 text-discord">Available Placeholders</h3>
+                                <ul className="space-y-1 text-xs">
+                                   {[
+                                      { tag: '[user.mention]', desc: 'mention user' },
+                                      { tag: '[user.username]', desc: 'username only' },
+                                      { tag: '[server.name]', desc: 'server name' },
+                                      { tag: '[membercount]', desc: 'total member count' },
+                                      { tag: '[membercount.ordinal]', desc: 'with ordinal (1st, 2nd)' },
+                                   ].map((p, idx) => (
+                                      <li key={idx} onClick={() => copyToClipboard(p.tag)} className="cursor-pointer hover:bg-dark-hover p-2 rounded transition-colors wrap-break-word">
+                                         <span className="font-bold text-discord block mb-1">{p.tag}</span>
+                                         <span className="text-text-secondary">{p.desc}</span>
+                                      </li>
+                                   ))}
+                                </ul>
+                             </div>
+                          )}
+                       </div>
                        <input 
                          type="text" 
-                         defaultValue="You are the [membercount.ordinal] member!"
+                         value={memberCountText}
+                         onChange={(e) => {
+                             setMemberCountText(e.target.value);
+                             handleFormChange();
+                         }}
                          className="w-full bg-dark-card border border-border-dark rounded-lg px-4 py-2.5 focus:outline-none focus:border-discord transition-all text-white" 
+                         placeholder="You are the [membercount.ordinal] member!"
                        />
-                       <p className="text-xs text-text-secondary mt-2">Text to display below username. Use placeholders or clear to hide.</p>
+                       <p className="text-xs text-text-secondary mt-2">Text to display below username. Use placeholders or clear to hide (if empty, it will be hidden).</p>
                     </div>
 
                     {/* Background selector placeholder */}
