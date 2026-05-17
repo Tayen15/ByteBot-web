@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import LoginButton from '@/components/LoginButton';
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
@@ -47,12 +48,7 @@ export default async function Home() {
                 </div>
               </Link>
             ) : (
-              <Link
-                href="/api/auth/signin"
-                className="px-8 py-4 bg-dark-card hover:bg-dark-hover border border-border-dark rounded-lg font-semibold text-white transition-all duration-200"
-              >
-                Login
-              </Link>
+              <LoginButton className="px-8 py-4 bg-dark-card hover:bg-dark-hover border border-border-dark rounded-lg font-semibold text-white transition-all duration-200" />
             )}
           </div>
         </div>

@@ -6,12 +6,46 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 
+type FeatureActiveStates = {
+  prayer_times: boolean;
+  welcome_message: boolean;
+  rules_management: boolean;
+  social_alerts: boolean;
+  server_monitoring: boolean;
+};
+
+type FeatureStates = {
+  prayer_times: boolean;
+  welcome_message: boolean;
+  rules_management: boolean;
+  social_alerts: boolean;
+  server_monitoring: boolean;
+  active_states?: Partial<FeatureActiveStates>;
+};
+
+const DEFAULT_FEATURE_STATES: FeatureStates = {
+  prayer_times: true,
+  welcome_message: true,
+  rules_management: true,
+  social_alerts: true,
+  server_monitoring: true,
+  active_states: {
+    prayer_times: false,
+    welcome_message: false,
+    rules_management: false,
+    social_alerts: false,
+    server_monitoring: false,
+  },
+};
+
 export default function DashboardSidebar({ 
   guildId, 
-  initialGuilds = [] 
+  initialGuilds = [],
+  initialFeatureStates
 }: { 
   guildId: string;
   initialGuilds?: { id: string; name: string; icon: string | null; botInGuild: boolean }[];
+  initialFeatureStates?: FeatureStates;
 }) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -30,13 +64,8 @@ export default function DashboardSidebar({
     image: session?.user?.image ?? null,
   };
 
-  const featureStates = {
-    prayer_times: true,
-    welcome_message: true,
-    rules_management: true,
-    social_alerts: true,
-    server_monitoring: true,
-  };
+  const featureStates: FeatureStates = initialFeatureStates || DEFAULT_FEATURE_STATES;
+  const activeStates: Partial<FeatureActiveStates> = featureStates.active_states || {};
 
   // Close sidebar on ESC
   useEffect(() => {
@@ -275,7 +304,8 @@ export default function DashboardSidebar({
                     <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span className="text-sm">Prayer Times</span>
+                    <span className="text-sm flex-1">Prayer Times</span>
+                    {activeStates.prayer_times && <span className="w-1.5 h-1.5 rounded-full bg-success shrink-0" />}
                   </Link>
                 </li>
               )}
@@ -285,7 +315,8 @@ export default function DashboardSidebar({
                     <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                     </svg>
-                    <span className="text-sm">Welcome Messages</span>
+                    <span className="text-sm flex-1">Welcome Messages</span>
+                    {activeStates.welcome_message && <span className="w-1.5 h-1.5 rounded-full bg-success shrink-0" />}
                   </Link>
                 </li>
               )}
@@ -295,7 +326,8 @@ export default function DashboardSidebar({
                     <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    <span className="text-sm">Server Rules</span>
+                    <span className="text-sm flex-1">Server Rules</span>
+                    {activeStates.rules_management && <span className="w-1.5 h-1.5 rounded-full bg-success shrink-0" />}
                   </Link>
                 </li>
               )}
@@ -305,7 +337,8 @@ export default function DashboardSidebar({
                     <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                     </svg>
-                    <span className="text-sm">Social Alerts</span>
+                    <span className="text-sm flex-1">Social Alerts</span>
+                    {activeStates.social_alerts && <span className="w-1.5 h-1.5 rounded-full bg-success shrink-0" />}
                   </Link>
                 </li>
               )}
@@ -315,7 +348,8 @@ export default function DashboardSidebar({
                     <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     </svg>
-                    <span className="text-sm">Server Monitoring</span>
+                    <span className="text-sm flex-1">Server Monitoring</span>
+                    {activeStates.server_monitoring && <span className="w-1.5 h-1.5 rounded-full bg-success shrink-0" />}
                   </Link>
                 </li>
               )}
