@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
@@ -20,11 +21,12 @@ async function handler(
   const search = req.nextUrl.search || '';
   const url = `${BOT_API_URL}/${botPath}${search}`;
 
-    const discordId = (session.user as { id?: string, discordId?: string }).id || (session.user as any).discordId || '';
+  const discordId = (session.user as { id?: string, discordId?: string }).id || (session.user as any).discordId || '';
   const isOwner = discordId === OWNER_ID;
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
     'x-api-key': INTERNAL_API_KEY,
     'x-discord-id': discordId,
     'x-discord-username': session.user.name || '',

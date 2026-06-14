@@ -20,6 +20,11 @@ export default function WelcomeMessagesPage({ params }: { params: Promise<{ id: 
   const [memberCountText, setMemberCountText] = useState('You are the [membercount.ordinal] member!');
   const [embedTitle, setEmbedTitle] = useState('Welcome!');
   const [embedDesc, setEmbedDesc] = useState('Glad to have you here, {{mention}}!');
+  const [bgImageUrl, setBgImageUrl] = useState('');
+  
+  const [layout, setLayout] = useState('simple');
+  const [avatarShape, setAvatarShape] = useState('circle');
+  const [font, setFont] = useState('gg sans');
   
   const [showPlaceholders, setShowPlaceholders] = useState(false);
   const [showSubTextPlaceholders, setShowSubTextPlaceholders] = useState(false);
@@ -35,11 +40,17 @@ export default function WelcomeMessagesPage({ params }: { params: Promise<{ id: 
         const w = wData.welcomeConfig;
         setIsEnabled(w.enabled ?? false);
         setIsDmEnabled(w.dmEnabled ?? false);
+        setUseEmbed(w.useEmbed ?? false);
+        setUseCustomImage(w.useCustomImage ?? false);
         setSelectedChannel(w.channelId ?? '');
         setMessageText(w.message ?? 'Welcome {{mention}} to {{server}}!');
         setEmbedTitle(w.embedTitle ?? 'Welcome!');
         setEmbedDesc(w.embedDescription ?? 'Glad to have you here, {{mention}}!');
         setMemberCountText(w.memberCountText !== null && w.memberCountText !== undefined ? w.memberCountText : 'You are the [membercount.ordinal] member!');
+        setBgImageUrl(w.bgImageUrl ?? '');
+        setLayout(w.layout ?? 'simple');
+        setAvatarShape(w.avatarShape ?? 'circle');
+        setFont(w.font ?? 'gg sans');
       }
       if (chData.success) setChannels(chData.channels ?? []);
     }).catch(console.error).finally(() => setLoading(false));
@@ -67,6 +78,12 @@ export default function WelcomeMessagesPage({ params }: { params: Promise<{ id: 
           embedTitle,
           embedDescription: embedDesc,
           memberCountText,
+          bgImageUrl,
+          layout,
+          avatarShape,
+          font,
+          useCustomImage,
+          useEmbed,
         }),
       });
       const data = await res.json();
@@ -295,27 +312,27 @@ export default function WelcomeMessagesPage({ params }: { params: Promise<{ id: 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-border-dark pt-6">
                        <div>
                           <label className="block text-sm font-medium mb-2">Layout</label>
-                          <select className="w-full bg-dark-card border border-border-dark rounded-lg px-4 py-2.5 focus:outline-none focus:border-discord transition-all text-white">
-                             <option value="simple">Simple (Center)</option>
-                             <option value="left">Avatar Left</option>
-                             <option value="right">Avatar Right</option>
-                             <option value="text">Text Only</option>
-                          </select>
-                       </div>
-                       <div>
-                          <label className="block text-sm font-medium mb-2">Avatar Shape</label>
-                          <select className="w-full bg-dark-card border border-border-dark rounded-lg px-4 py-2.5 focus:outline-none focus:border-discord transition-all text-white">
-                             <option value="circle">Circle</option>
-                             <option value="square">Square</option>
-                          </select>
-                       </div>
-                       <div>
-                          <label className="block text-sm font-medium mb-2">Font</label>
-                          <select className="w-full bg-dark-card border border-border-dark rounded-lg px-4 py-2.5 focus:outline-none focus:border-discord transition-all text-white">
-                             <option value="gg sans">gg sans (Discord)</option>
-                             <option value="Arial">Arial</option>
-                             <option value="Impact">Impact</option>
-                          </select>
+                           <select value={layout} onChange={(e) => { setLayout(e.target.value); handleFormChange(); }} className="w-full bg-dark-card border border-border-dark rounded-lg px-4 py-2.5 focus:outline-none focus:border-discord transition-all text-white">
+                              <option value="simple">Simple (Center)</option>
+                              <option value="left">Avatar Left</option>
+                              <option value="right">Avatar Right</option>
+                              <option value="text">Text Only</option>
+                           </select>
+                        </div>
+                        <div>
+                           <label className="block text-sm font-medium mb-2">Avatar Shape</label>
+                           <select value={avatarShape} onChange={(e) => { setAvatarShape(e.target.value); handleFormChange(); }} className="w-full bg-dark-card border border-border-dark rounded-lg px-4 py-2.5 focus:outline-none focus:border-discord transition-all text-white">
+                              <option value="circle">Circle</option>
+                              <option value="square">Square</option>
+                           </select>
+                        </div>
+                        <div>
+                           <label className="block text-sm font-medium mb-2">Font</label>
+                           <select value={font} onChange={(e) => { setFont(e.target.value); handleFormChange(); }} className="w-full bg-dark-card border border-border-dark rounded-lg px-4 py-2.5 focus:outline-none focus:border-discord transition-all text-white">
+                              <option value="gg sans">gg sans (Discord)</option>
+                              <option value="Arial">Arial</option>
+                              <option value="Impact">Impact</option>
+                           </select>
                        </div>
                     </div>
 
@@ -375,8 +392,12 @@ export default function WelcomeMessagesPage({ params }: { params: Promise<{ id: 
                          className="w-full flex items-center justify-between px-4 py-3 bg-dark-card border border-border-dark rounded-lg hover:border-discord transition-colors"
                        >
                          <div className="flex items-center gap-3">
-                           <div className="w-10 h-10 rounded bg-[#23272A] border border-border-dark"></div>
-                           <span>Dark Background</span>
+                           {bgImageUrl ? (
+                               <div className="w-10 h-10 rounded bg-cover bg-center border border-border-dark" style={{ backgroundImage: `url(${bgImageUrl})` }}></div>
+                           ) : (
+                               <div className="w-10 h-10 rounded bg-[#23272A] border border-border-dark"></div>
+                           )}
+                           <span>{bgImageUrl ? 'Image Template' : 'Dark Background'}</span>
                          </div>
                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
@@ -384,14 +405,29 @@ export default function WelcomeMessagesPage({ params }: { params: Promise<{ id: 
                        </button>
 
                        {showImageGallery && (
-                         <div className="absolute top-full mt-2 left-0 w-full bg-dark-secondary border border-border-dark rounded-xl shadow-xl z-20 p-4">
+                         <div className="absolute top-full mt-2 left-0 w-full bg-dark-secondary border border-border-dark rounded-xl shadow-xl z-20 p-4 max-h-80 overflow-y-auto custom-scrollbar">
                            <p className="text-xs font-bold text-discord mb-3 uppercase tracking-wide">Solid Colors</p>
-                           <div className="grid grid-cols-3 gap-3">
-                              <div className="h-16 bg-[#23272A] rounded-lg cursor-pointer border-2 border-transparent hover:border-discord flex items-center justify-center font-semibold">Dark</div>
-                              <div className="h-16 bg-discord rounded-lg cursor-pointer border-2 border-transparent hover:border-white flex items-center justify-center font-semibold">Blurple</div>
-                              <div className="h-16 bg-[#57F287] rounded-lg cursor-pointer border-2 border-transparent hover:border-white text-dark-bg flex items-center justify-center font-semibold">Green</div>
+                           <div className="grid grid-cols-3 gap-3 mb-4">
+                              <div onClick={() => { setBgImageUrl(''); handleFormChange(); setShowImageGallery(false); }} className={`h-16 bg-[#23272A] rounded-lg cursor-pointer border-2 ${!bgImageUrl ? 'border-discord' : 'border-transparent hover:border-discord'} flex items-center justify-center font-semibold text-white`}>Dark</div>
                            </div>
-                           {/* Intentionally omitting full gallery for brevity in MVP port */}
+                           <p className="text-xs font-bold text-discord mb-3 uppercase tracking-wide">Image Templates</p>
+                           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                              {[
+                                'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=300',
+                                'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&q=80&w=300',
+                                'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=300',
+                                'https://images.unsplash.com/photo-1605379399642-870262d3d051?auto=format&fit=crop&q=80&w=300',
+                                'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=300',
+                                'https://images.unsplash.com/photo-1506744626753-1fa7673e4b78?auto=format&fit=crop&q=80&w=300'
+                              ].map((url, i) => (
+                                <div 
+                                   key={i}
+                                   onClick={() => { setBgImageUrl(url); handleFormChange(); setShowImageGallery(false); }}
+                                   className={`h-16 bg-cover bg-center rounded-lg cursor-pointer border-2 ${bgImageUrl === url ? 'border-discord' : 'border-transparent hover:border-discord'}`}
+                                   style={{ backgroundImage: `url(${url})` }}
+                                />
+                              ))}
+                           </div>
                          </div>
                        )}
                     </div>
@@ -435,12 +471,17 @@ export default function WelcomeMessagesPage({ params }: { params: Promise<{ id: 
               <h3 className="text-xs font-bold text-text-secondary uppercase tracking-widest mb-4">Message Preview</h3>
               <div className="bg-dark-card p-4 rounded-lg text-sm wrap-break-word whitespace-pre-wrap text-white">
                  {messageText.length > 0 ? (
-                    messageText
-                      .replace(/\[user\.mention\]/g, '<span class="text-discord bg-discord/10 px-1 rounded cursor-pointer">@NewUser</span>')
-                      .replace(/\[user\.username\]/g, 'NewUser')
-                      .replace(/\[server\.name\]/g, '<strong>Your Server</strong>')
-                      .replace(/\[membercount\]/g, '1,235')
-                      .replace(/\[membercount\.ordinal\]/g, '1,235th')
+                    <div dangerouslySetInnerHTML={{
+                      __html: messageText
+                        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                        .replace(/\[user\.mention\]/g, '<span class="text-discord bg-discord/10 px-1 rounded cursor-pointer">@NewUser</span>')
+                        .replace(/\[user\.username\]/g, 'NewUser')
+                        .replace(/\[server\.name\]/g, '<strong>Your Server</strong>')
+                        .replace(/\[membercount\]/g, '1,235')
+                        .replace(/\[membercount\.ordinal\]/g, '1,235th')
+                        .replace(/\[#(\d+)\]/g, '<span class="text-discord bg-discord/10 px-1 rounded cursor-pointer">#channel</span>')
+                        .replace(/&lt;#(\d+)&gt;/g, '<span class="text-discord bg-discord/10 px-1 rounded cursor-pointer">#channel</span>')
+                    }} />
                  ) : (
                     <em className="text-text-secondary">Type a message to preview...</em>
                  )}
@@ -462,17 +503,20 @@ export default function WelcomeMessagesPage({ params }: { params: Promise<{ id: 
            {useCustomImage && (
              <div className="bg-dark-secondary border border-border-dark rounded-xl p-6 animate-in slide-in-from-bottom-4">
                 <h3 className="text-xs font-bold text-text-secondary uppercase tracking-widest mb-4">Image Card Preview</h3>
-                <div className="aspect-2/1 w-full bg-[#23272A] rounded-lg border border-border-dark flex flex-col items-center justify-center p-4 relative overflow-hidden">
-                   {/* Mock Canvas Preview */}
-                   <div className="w-16 h-16 bg-discord rounded-full border-4 border-[#23272A] z-10 -mb-8 relative flex items-center justify-center font-bold text-xl uppercase">
-                      Usr
-                   </div>
-                   <div className="bg-white/5 backdrop-blur-sm pt-10 pb-4 px-6 rounded-xl w-full text-center mt-2 relative z-0">
-                      <h4 className="text-white font-bold text-lg">WELCOME TO SERVER</h4>
-                      <p className="text-discord font-medium">NewUser#1234</p>
-                      <p className="text-text-secondary text-xs mt-2">You are the 1,235th member!</p>
-                   </div>
-                </div>
+                <div className={`aspect-2/1 w-full ${!bgImageUrl ? 'bg-[#23272A]' : 'bg-cover bg-center'} rounded-lg border border-border-dark flex ${layout === 'text' ? 'flex-col items-center justify-center' : layout === 'left' ? 'flex-row items-center justify-start pl-8' : layout === 'right' ? 'flex-row-reverse items-center justify-start pr-8' : 'flex-col items-center justify-center'} p-4 relative overflow-hidden`} style={bgImageUrl ? { backgroundImage: `url(${bgImageUrl})` } : {}}>
+                    {/* Mock Canvas Preview */}
+                    {bgImageUrl && <div className="absolute inset-0 bg-black/40 z-0"></div>}
+                    {layout !== 'text' && (
+                       <div className={`w-16 h-16 sm:w-20 sm:h-20 bg-discord ${avatarShape === 'circle' ? 'rounded-full' : 'rounded-xl'} border-4 border-[#23272A] z-10 ${layout === 'simple' ? '-mb-8' : 'mx-4'} relative flex items-center justify-center font-bold text-xl uppercase shrink-0`}>
+                          Usr
+                       </div>
+                    )}
+                    <div className={`${layout === 'simple' ? 'pt-10 text-center mt-2' : layout === 'text' ? 'text-center' : layout === 'left' ? 'text-left' : 'text-right'} pb-4 px-2 w-full relative z-0`} style={{ fontFamily: font === 'gg sans' ? 'sans-serif' : font }}>
+                       <h4 className="text-white font-bold text-lg sm:text-xl">WELCOME TO SERVER</h4>
+                       <p className="text-discord font-medium">NewUser#1234</p>
+                       {memberCountText && <p className="text-text-secondary text-xs mt-2">{memberCountText.replace(/\[membercount\.ordinal\]/g, '1,235th')}</p>}
+                    </div>
+                 </div>
              </div>
            )}
         </div>
