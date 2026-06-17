@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.1.2](https://github.com/Tayen15/ByteBot-web/compare/v0.1.1...v0.1.2) (2026-06-17)
+
+
+### Features
+
+* implement welcome message configuration page with unsaved changes tracking ([74f71e3](https://github.com/Tayen15/ByteBot-web/commit/74f71e3a3fdf859f46ac6513fe17495535425199))
+
+
+### Bug Fixes
+
+* implement bot API proxy route and welcome message configuration dashboard ([a4062de](https://github.com/Tayen15/ByteBot-web/commit/a4062de180374bb4fe9cf188d3cc5ee42fbb1306))
+
 ## 0.1.1 (2026-05-17)
 
 
