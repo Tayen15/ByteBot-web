@@ -12,6 +12,7 @@ type FeatureActiveStates = {
   rules_management: boolean;
   social_alerts: boolean;
   server_monitoring: boolean;
+  ai_features?: boolean;
 };
 
 type FeatureStates = {
@@ -20,6 +21,7 @@ type FeatureStates = {
   rules_management: boolean;
   social_alerts: boolean;
   server_monitoring: boolean;
+  ai_features?: boolean;
   active_states?: Partial<FeatureActiveStates>;
 };
 
@@ -35,6 +37,7 @@ const DEFAULT_FEATURE_STATES: FeatureStates = {
     rules_management: false,
     social_alerts: false,
     server_monitoring: false,
+    ai_features: false,
   },
 };
 
@@ -350,6 +353,17 @@ export default function DashboardSidebar({
                     </svg>
                     <span className="text-sm flex-1">Server Monitoring</span>
                     {activeStates.server_monitoring && <span className="w-1.5 h-1.5 rounded-full bg-success shrink-0" />}
+                  </Link>
+                </li>
+              )}
+              {featureStates.ai_features && (
+                <li>
+                  <Link href={`/dashboard/guild/${guildId}/ai`} className={navItemClass(isActive('ai'))}>
+                    <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    <span className="text-sm flex-1">Advanced AI</span>
+                    {activeStates.ai_features && <span className="w-1.5 h-1.5 rounded-full bg-success shrink-0" />}
                   </Link>
                 </li>
               )}
