@@ -16,7 +16,7 @@ export default async function Home() {
             ByteBot
           </h1>
           <p className="text-xl md:text-2xl text-text-secondary mb-12 max-w-3xl mx-auto">
-            A powerful Discord bot with web dashboard for server management, music streaming, and community features
+            The ultimate, AI-powered Discord bot. Manage your server seamlessly with an intuitive web dashboard, smart moderation, and rich community features.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -62,32 +62,38 @@ export default async function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {/* Feature Card 1 */}
             <div className="bg-dark-card border border-border-dark rounded-lg p-6 hover:border-discord transition-all duration-200">
-              <h3 className="text-xl font-bold text-discord mb-3">Music Streaming</h3>
-              <p className="text-text-secondary">24/7 lofi music streaming with automatic reconnection and session management</p>
+              <h3 className="text-xl font-bold text-discord mb-3">Advanced AI System</h3>
+              <p className="text-text-secondary">Bring your server to life with an intelligent chatbot, automated context-aware moderation, and instant chat summarization (TLDR).</p>
             </div>
 
             {/* Feature Card 2 */}
             <div className="bg-dark-card border border-border-dark rounded-lg p-6 hover:border-discord transition-all duration-200">
-              <h3 className="text-xl font-bold text-discord mb-3">Prayer Times</h3>
-              <p className="text-text-secondary">Automated prayer time notifications for multiple locations with custom messages</p>
+              <h3 className="text-xl font-bold text-discord mb-3">Music Streaming</h3>
+              <p className="text-text-secondary">24/7 high-quality Lofi music streaming with automatic reconnections and seamless voice channel management.</p>
             </div>
 
             {/* Feature Card 3 */}
             <div className="bg-dark-card border border-border-dark rounded-lg p-6 hover:border-discord transition-all duration-200">
-              <h3 className="text-xl font-bold text-discord mb-3">Server Monitoring</h3>
-              <p className="text-text-secondary">Monitor Minecraft servers with real-time status updates and player counts</p>
+              <h3 className="text-xl font-bold text-discord mb-3">Prayer Times</h3>
+              <p className="text-text-secondary">Stay connected with your faith. Automated, location-based prayer time notifications delivered directly to your server.</p>
             </div>
 
             {/* Feature Card 4 */}
             <div className="bg-dark-card border border-border-dark rounded-lg p-6 hover:border-discord transition-all duration-200">
-              <h3 className="text-xl font-bold text-discord mb-3">Web Dashboard</h3>
-              <p className="text-text-secondary">Complete web-based configuration with Discord OAuth authentication</p>
+              <h3 className="text-xl font-bold text-discord mb-3">Server Monitoring</h3>
+              <p className="text-text-secondary">Real-time Minecraft server tracking. Keep your community updated with live player counts and server status.</p>
             </div>
 
             {/* Feature Card 5 */}
             <div className="bg-dark-card border border-border-dark rounded-lg p-6 hover:border-discord transition-all duration-200">
+              <h3 className="text-xl font-bold text-discord mb-3">Web Dashboard</h3>
+              <p className="text-text-secondary">Take full control. A sleek, modern control panel with seamless Discord OAuth authentication and real-time synchronization.</p>
+            </div>
+
+            {/* Feature Card 6 */}
+            <div className="bg-dark-card border border-border-dark rounded-lg p-6 hover:border-discord transition-all duration-200">
               <h3 className="text-xl font-bold text-discord mb-3">Moderation Tools</h3>
-              <p className="text-text-secondary">Ban, kick, and message clearing with permission-based access control</p>
+              <p className="text-text-secondary">Keep your community safe. Essential moderation commands with robust permission-based access control.</p>
             </div>
           </div>
         </div>

@@ -6,7 +6,42 @@ export const metadata: Metadata = {
   description: 'Complete list of available slash commands for ByteBot',
 };
 
-export default function CommandsPage() {
+interface CommandData {
+  name: string;
+  category: string;
+  description: string;
+  adminOnly: boolean;
+  ownerOnly: boolean;
+}
+
+async function getCommands(): Promise<CommandData[]> {
+  try {
+    const BOT_API_URL = process.env.BOT_API_URL || 'http://localhost:4000/api';
+    const res = await fetch(`${BOT_API_URL}/public/commands`, { next: { revalidate: 60 } });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.success ? data.commands : [];
+  } catch (error) {
+    console.error('Failed to fetch commands:', error);
+    return [];
+  }
+}
+
+export default async function CommandsPage() {
+  const commands = await getCommands();
+  
+  // Group commands by category
+  const groupedCommands = commands.reduce((acc, cmd) => {
+    // Capitalize category name
+    const cat = cmd.category.charAt(0).toUpperCase() + cmd.category.slice(1);
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(cmd);
+    return acc;
+  }, {} as Record<string, CommandData[]>);
+
+  // Sort categories alphabetically
+  const categories = Object.keys(groupedCommands).sort();
+
   return (
     <>
       {/* Header Section */}
@@ -22,139 +57,35 @@ export default function CommandsPage() {
       {/* Commands Section */}
       <section className="py-16">
         <div className="container mx-auto px-4 max-w-6xl">
-          
-          {/* Information Commands */}
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-              <span className="w-1 h-8 bg-discord rounded"></span>
-              Information
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-dark-card border border-border-dark rounded-lg p-6 hover:border-discord transition-all">
-                <div className="flex items-start justify-between mb-3">
-                  <code className="text-discord font-mono text-lg">/help</code>
-                  <span className="text-xs bg-green-900 px-2 py-1 rounded text-green-400">Public</span>
-                </div>
-                <p className="text-text-secondary">Display list of available commands</p>
-              </div>
-              
-              <div className="bg-dark-card border border-border-dark rounded-lg p-6 hover:border-discord transition-all">
-                <div className="flex items-start justify-between mb-3">
-                  <code className="text-discord font-mono text-lg">/ping</code>
-                  <span className="text-xs bg-green-900 px-2 py-1 rounded text-green-400">Public</span>
-                </div>
-                <p className="text-text-secondary">Check bot latency and response time</p>
-              </div>
-              
-              <div className="bg-dark-card border border-border-dark rounded-lg p-6 hover:border-discord transition-all">
-                <div className="flex items-start justify-between mb-3">
-                  <code className="text-discord font-mono text-lg">/serverinfo</code>
-                  <span className="text-xs bg-green-900 px-2 py-1 rounded text-green-400">Public</span>
-                </div>
-                <p className="text-text-secondary">Display detailed server information</p>
-              </div>
-              
-              <div className="bg-dark-card border border-border-dark rounded-lg p-6 hover:border-discord transition-all">
-                <div className="flex items-start justify-between mb-3">
-                  <code className="text-discord font-mono text-lg">/userinfo</code>
-                  <span className="text-xs bg-green-900 px-2 py-1 rounded text-green-400">Public</span>
-                </div>
-                <p className="text-text-secondary">Get information about a user</p>
-              </div>
-              
-              <div className="bg-dark-card border border-border-dark rounded-lg p-6 hover:border-discord transition-all">
-                <div className="flex items-start justify-between mb-3">
-                  <code className="text-discord font-mono text-lg">/stats</code>
-                  <span className="text-xs bg-green-900 px-2 py-1 rounded text-green-400">Public</span>
-                </div>
-                <p className="text-text-secondary">Display bot statistics and uptime</p>
-              </div>
+          {categories.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-text-secondary">Failed to load commands or no commands available.</p>
             </div>
-          </div>
-
-          {/* Moderation Commands */}
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-              <span className="w-1 h-8 bg-discord rounded"></span>
-              Moderation
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-dark-card border border-border-dark rounded-lg p-6 hover:border-discord transition-all">
-                <div className="flex items-start justify-between mb-3">
-                  <code className="text-discord font-mono text-lg">/ban</code>
-                  <span className="text-xs bg-red-900 px-2 py-1 rounded text-red-400">Admin</span>
+          ) : (
+            categories.map((category) => (
+              <div key={category} className="mb-12">
+                <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+                  <span className="w-1 h-8 bg-discord rounded"></span>
+                  {category}
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {groupedCommands[category].map((cmd) => (
+                    <div key={cmd.name} className="bg-dark-card border border-border-dark rounded-lg p-6 hover:border-discord transition-all">
+                      <div className="flex items-start justify-between mb-3">
+                        <code className="text-discord font-mono text-lg">/{cmd.name}</code>
+                        {cmd.adminOnly ? (
+                          <span className="text-xs bg-red-900 px-2 py-1 rounded text-red-400">Admin</span>
+                        ) : (
+                          <span className="text-xs bg-green-900 px-2 py-1 rounded text-green-400">Public</span>
+                        )}
+                      </div>
+                      <p className="text-text-secondary">{cmd.description}</p>
+                    </div>
+                  ))}
                 </div>
-                <p className="text-text-secondary">Ban a user from the server</p>
               </div>
-              
-              <div className="bg-dark-card border border-border-dark rounded-lg p-6 hover:border-discord transition-all">
-                <div className="flex items-start justify-between mb-3">
-                  <code className="text-discord font-mono text-lg">/kick</code>
-                  <span className="text-xs bg-red-900 px-2 py-1 rounded text-red-400">Admin</span>
-                </div>
-                <p className="text-text-secondary">Kick a user from the server</p>
-              </div>
-              
-              <div className="bg-dark-card border border-border-dark rounded-lg p-6 hover:border-discord transition-all">
-                <div className="flex items-start justify-between mb-3">
-                  <code className="text-discord font-mono text-lg">/clear</code>
-                  <span className="text-xs bg-red-900 px-2 py-1 rounded text-red-400">Admin</span>
-                </div>
-                <p className="text-text-secondary">Clear multiple messages at once (bulk delete)</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Music Commands */}
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-              <span className="w-1 h-8 bg-discord rounded"></span>
-              Music
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-dark-card border border-border-dark rounded-lg p-6 hover:border-discord transition-all">
-                <div className="flex items-start justify-between mb-3">
-                  <code className="text-discord font-mono text-lg">/lofi</code>
-                  <span className="text-xs bg-green-900 px-2 py-1 rounded text-green-400">Public</span>
-                </div>
-                <p className="text-text-secondary">Start 24/7 lofi music stream in voice channel</p>
-              </div>
-              
-              <div className="bg-dark-card border border-border-dark rounded-lg p-6 hover:border-discord transition-all">
-                <div className="flex items-start justify-between mb-3">
-                  <code className="text-discord font-mono text-lg">/stoplofi</code>
-                  <span className="text-xs bg-red-900 px-2 py-1 rounded text-red-400">Admin</span>
-                </div>
-                <p className="text-text-secondary">Stop the lofi music stream</p>
-              </div>
-              
-              <div className="bg-dark-card border border-border-dark rounded-lg p-6 hover:border-discord transition-all">
-                <div className="flex items-start justify-between mb-3">
-                  <code className="text-discord font-mono text-lg">/lyrics</code>
-                  <span className="text-xs bg-green-900 px-2 py-1 rounded text-green-400">Public</span>
-                </div>
-                <p className="text-text-secondary">Search and display song lyrics</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Minecraft Commands */}
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-              <span className="w-1 h-8 bg-discord rounded"></span>
-              Minecraft
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-dark-card border border-border-dark rounded-lg p-6 hover:border-discord transition-all">
-                <div className="flex items-start justify-between mb-3">
-                  <code className="text-discord font-mono text-lg">/mcstatus</code>
-                  <span className="text-xs bg-green-900 px-2 py-1 rounded text-green-400">Public</span>
-                </div>
-                <p className="text-text-secondary">Check Minecraft server status and player count</p>
-              </div>
-            </div>
-          </div>
-
+            ))
+          )}
         </div>
       </section>
 
